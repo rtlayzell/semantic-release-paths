@@ -24,7 +24,8 @@
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)",
-    "Matt Travi <npm@travi.org> (https://matt.travi.org/)"
+    "Matt Travi <npm@travi.org> (https://matt.travi.org/)",
+    "Reegan Layzell (https://github.com/rtlayzell)"
   ],
   "dependencies": {
     "@semantic-release/commit-analyzer": "^13.0.1",
