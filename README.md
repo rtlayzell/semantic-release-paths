@@ -1,191 +1,119 @@
-<h1 align="center" style="border-bottom: none;">📦🚀 semantic-release</h1>
-<h3 align="center">Fully automated version management and package publishing</h3>
-<p align="center">
-  <a href="https://github.com/semantic-release/semantic-release/discussions">
-    <img alt="Join the community on GitHub Discussions" src="https://img.shields.io/badge/Join%20the%20community-on%20GitHub%20Discussions-blue">
-  </a>
-  <a href="https://github.com/semantic-release/semantic-release/actions/workflows/test.yml">
-    <img alt="Build states" src="https://github.com/semantic-release/semantic-release/actions/workflows/test.yml/badge.svg">
-  </a>
-  <a href="https://securityscorecards.dev/viewer/?uri=github.com/semantic-release/semantic-release">
-    <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/semantic-release/semantic-release/badge">
-  </a>
-  <a href="#badge">
-    <img alt="semantic-release: angular" src="https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release">
-  </a>
-</p>
-<p align="center">
-  <a href="https://www.npmjs.com/package/semantic-release">
-    <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release/latest.svg">
-  </a>
-  <a href="https://www.npmjs.com/package/semantic-release">
-    <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release/next.svg">
-  </a>
-  <a href="https://www.npmjs.com/package/semantic-release">
-    <img alt="npm beta version" src="https://img.shields.io/npm/v/semantic-release/beta.svg">
-  </a>
-</p>
+# semantic-release-paths
 
-**semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes, and publishing the package.
+> semantic-release-paths is a fork of semantic-release and is not maintained by the same team as semantic-release.
 
-This removes the immediate connection between human emotions and version numbers, strictly following the [Semantic Versioning](http://semver.org) specification and communicating the **impact** of changes to consumers.
+A drop-in replacement for [semantic-release](https://github.com/semantic-release/semantic-release) that includes a `paths` configuration option to filter commits by the changed file paths. While this does enable independent versioning of packages in monorepos - with some [careful configuration](#monorepo) - it is **not** intended as a complete solution for monorepos.
 
-> Trust us, this will change your workflow for the better. – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
+## Motivation
 
-## Fork Notes
+The base implementation of `semantic-release` does not support filtering commits by path and will not be implementing this feature, based on a desire for a more complete solution, outlined by this [issue comment](https://github.com/semantic-release/semantic-release/issues/193#issuecomment-545118972).<br>
+As such, `semantic-release` has seen a number of forks, pull-requests, plugins and so on, to satisfy the communities needs. Most notable the [semantic-release-monorepo](https://github.com/pmowrer/semantic-release-monorepo) project and the [semantic-release-path-filter](https://github.com/psm14/semantic-release-path-filter) plugin. `semantic-release-paths` is yet another attempt at a solution.
 
-This is a fork of the [semantic-release](https://github.com/semantic-release/semantic-release) repository that introduces the `paths` configuration option. It is intended to provide a rudimentary avenue for monorepo setups, but is by no means a full monorepo solution.
+### semantic-release-monorepo
 
-In a monorepo setup, each package specifies it's own release configuration with a `tagFormat` to avoid conflicting versions with other packages in the repository, and a `paths` configuration option for all paths that affect a particular package's version (usually the path of the package and any workspace dependencies).
+The [semantic-release-monorepo](https://github.com/pmowrer/semantic-release-monorepo) is a somewhat opinionated solution that only considers file paths that are directly adjacent to the `package.json`. It does not allow you to control the paths themselves, which is problematic if you have workspace dependencies that should trigger a new version of a package. It also forces the `tagFormat` to adopt the name of your package, while not necessarily a bad thing, it might not always be desirable.
 
+### semantic-release-path-filter
+
+The [semantic-release-path-filter](https://github.com/psm14/semantic-release-path-filter) plugin does support a flexible paths configuration, but it falls short with shareable configurations. As the plugin requires you to wrap all other plugins you use with it. When using shared configuration, it is not possible to specify ahead of time the paths of the packages.
+
+### Conclusion
+
+The issues presented for the above solutions could be resolved if parameterized shared configuration were introduced to `semantic-release`. However, at time of writing this feature is not supported, nor does it seem planned for support.
+
+`semantic-release-paths` tries to be a happy medium between `semantic-release-monorepo` and `semantic-release-paths-filter`. An unopinionated way to filter commits based on paths and easily applicable to any release configuration setup.
+
+> There is also a [semantic-release-plus](https://github.com/semantic-release-plus/semantic-release) project that does infact do what this package is trying to achieve, but there hasn't been any commits in several years and it seems out of date with the current version of `semantic-release`.
+
+## Usage
+
+`semantic-release-paths` is a drop-in replacement for [semantic-release](https://github.com/semantic-release/semantic-release)
+
+### Installation
+
+```bash
+npm install -D semantic-release-paths
+```
+
+### Configuration
+
+As with `semantic-release` proper, you can define your [release configuration](https://github.com/semantic-release/semantic-release/blob/master/docs/usage/configuration.md#configuration) in a number ways. However, with `semantic-release-paths` you have the additional configuration option `paths`, that takes an array of repository relative path globs, and filters the commits passed to the plugins based on matches with the changed file paths.
+
+`package.json`
 ```json
 {
   // ...
+
   "release": {
-    "tagFormat": "package-v${version}",
-    "extends": [ /* ... */ ],
     "branches": [
       "main"
     ],
     "paths": [
-      "depedency/**"
+      "dependency/**"
       "package/**"
     ]
   }
+
   // ...
 }
 ```
 
-## Highlights
+## Monorepo
 
-- Fully automated release
-- Enforce [Semantic Versioning](https://semver.org) specification
-- New features and fixes are immediately available to users
-- Notify maintainers and users of new releases
-- Use formalized commit message convention to document changes in the codebase
-- Publish on different distribution channels (such as [npm dist-tags](https://docs.npmjs.com/cli/dist-tag)) based on git merges
-- Integrate with your [continuous integration workflow](docs/recipes/release-workflow/README.md#ci-configurations)
-- Avoid potential errors associated with manual releases
-- Support any [package managers and languages](docs/recipes/release-workflow/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
-- Simple and reusable configuration via [shareable configurations](docs/usage/shareable-configurations.md)
-- Support for [npm package provenance](https://github.com/semantic-release/npm#npm-provenance) that promotes increased supply-chain security via signed attestations on GitHub Actions
+`semantic-release-paths` is not intended as a complete solution for monorepos, but filtering commits by path does open up `semantic-release` to be used in monorepos and independently version every package in the repo.<br>
+In order to use `semantic-release-paths` in a monorepo you should ensure that each independently versioned package has it's own release configuration and a repository-level unique `tagFormat`.
 
-## How does it work?
+Given the following monorepo folder structure structure:
 
-### Commit message format
-
-**semantic-release** uses the commit messages to determine the consumer impact of changes in the codebase.
-Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publishes the release.
-
-By default, **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md).
-The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
-
-Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
-
-The table below shows which commit message gets you which release type when `semantic-release` runs (using the default configuration):
-
-| Commit message                                                                                                                                                                                   | Release type                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | ~~Patch~~ Fix Release                                                                                           |
-| `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release                                                                                       |
-| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release <br /> (Note that the `BREAKING CHANGE: ` token must be in the footer of the commit) |
-
-### Automation with CI
-
-**semantic-release** is meant to be executed on the CI environment after every successful build on the release branch.
-This way no human is directly involved in the release process and the releases are guaranteed to be [unromantic and unsentimental](https://github.com/dominictarr/sentimental-versioning#readme).
-
-### Triggering a release
-
-For each new commit added to one of the release branches (for example: `master`, `main`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
-
-**semantic-release** offers various ways to control the timing, the content and the audience of published releases.
-See example workflows in the following recipes:
-
-- [Using distribution channels](docs/recipes/release-workflow/distribution-channels.md#publishing-on-distribution-channels)
-- [Maintenance releases](docs/recipes/release-workflow/maintenance-releases.md#publishing-maintenance-releases)
-- [Pre-releases](docs/recipes/release-workflow/pre-releases.md#publishing-pre-releases)
-
-### Release steps
-
-After running the tests, the command `semantic-release` will execute the following steps:
-
-| Step              | Description                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Verify Conditions | Verify all the conditions to proceed with the release.                                                                          |
-| Get last release  | Obtain the commit corresponding to the last release by analyzing [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). |
-| Analyze commits   | Determine the type of release based on the commits added since the last release.                                                |
-| Verify release    | Verify the release conformity.                                                                                                  |
-| Generate notes    | Generate release notes for the commits added since the last release.                                                            |
-| Create Git tag    | Create a Git tag corresponding to the new release version.                                                                      |
-| Prepare           | Prepare the release.                                                                                                            |
-| Publish           | Publish the release.                                                                                                            |
-| Notify            | Notify of new releases or errors.                                                                                               |
-
-## Requirements
-
-In order to use **semantic-release** you need:
-
-- To host your code in a [Git repository](https://git-scm.com)
-- Use a Continuous Integration service that allows you to [securely set up credentials](docs/usage/ci-configuration.md#authentication)
-- A Git CLI version that meets [our version requirement](docs/support/git-version.md) installed in your Continuous Integration environment
-- A [Node.js](https://nodejs.org) version that meets [our version requirement](docs/support/node-version.md) installed in your Continuous Integration environment
-
-## Documentation
-
-- Usage
-  - [Getting started](docs/usage/getting-started.md)
-  - [Installation](docs/usage/installation.md)
-  - [CI Configuration](docs/usage/ci-configuration.md)
-  - [Configuration](docs/usage/configuration.md#configuration)
-  - [Plugins](docs/usage/plugins.md)
-  - [Workflow configuration](docs/usage/workflow-configuration.md)
-  - [Shareable configurations](docs/usage/shareable-configurations.md)
-- Extending
-  - [Plugins](docs/extending/plugins-list.md)
-  - [Shareable configuration](docs/extending/shareable-configurations-list.md)
-- Recipes
-  - [CI configurations](docs/recipes/ci-configurations/README.md)
-  - [Git hosted services](docs/recipes/git-hosted-services/README.md)
-  - [Release workflow](docs/recipes/release-workflow/README.md)
-- Developer guide
-  - [JavaScript API](docs/developer-guide/js-api.md)
-  - [Plugins development](docs/developer-guide/plugin.md)
-  - [Shareable configuration development](docs/developer-guide/shareable-configuration.md)
-- Support
-  - [Resources](docs/support/resources.md)
-  - [Frequently Asked Questions](docs/support/FAQ.md)
-  - [Troubleshooting](docs/support/troubleshooting.md)
-  - [Node version requirement](docs/support/node-version.md)
-  - [Node Support Policy](docs/support/node-support-policy.md)
-
-## Get help
-
-- [GitHub Discussions](https://github.com/semantic-release/semantic-release/discussions)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
-
-## Badge
-
-Let people know that your package is published using **semantic-release** and which [commit-convention](#commit-message-format) is followed by including this badge in your readme.
-
-[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
-
-```md
-[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+```
+.
+├── package-a/
+│   └── package.json  <-- package a
+├── package-b/
+|   └── package.json  <-- package b depends on a
+└── package.json      <-- workspace root
 ```
 
-## Team
+`package-a/package.json` may contain the release configuration.
 
-| [![Gregor Martynus](https://github.com/gr2m.png?size=100)](https://github.com/gr2m) | [![Pierre Vanduynslager](https://github.com/pvdlg.png?size=100)](https://github.com/pvdlg) | [![Matt Travi](https://github.com/travi.png?size=100)](https://github.com/travi) |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| [Gregor Martynus](https://github.com/gr2m)                                          | [Pierre Vanduynslager](https://github.com/pvdlg)                                           | [Matt Travi](https://github.com/travi)                                           |
+```json
+{
+  "name": "package-a",
+  "version": "0.0.0-semantic-release",
+  "release": {
+    "tagFormat": "package-a-v${version}",
+    "branches": [
+      "main"
+    ],
+    "paths": [
+      "package-a/**"
+    ]
+  }
+}
+```
 
-## Alumni
+and `package-b/package.json` may contain the release configuration:
 
-| [![Stephan Bönnemann](https://github.com/boennemann.png?size=100)](https://github.com/boennemann) | [![Rolf Erik Lekang](https://github.com/relekang.png?size=100)](https://github.com/relekang) | [![Johannes Jörg Schmidt](https://github.com/jo.png?size=100)](https://github.com/jo) | [![Finn Pauls](https://github.com/finnp.png?size=100)](https://github.com/finnp) | [![Christoph Witzko](https://github.com/christophwitzko.png?size=100)](https://github.com/christophwitzko) |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| [Stephan Bönnemann](https://github.com/boennemann)                                                | [Rolf Erik Lekang](https://github.com/relekang)                                              | [Johannes Jörg Schmidt](https://github.com/jo)                                        | [Finn Pauls](https://github.com/finnp)                                           | [Christoph Witzko](https://github.com/christophwitzko)                                                     |
+```json
+{
+  "name": "package-b",
+  "version": "0.0.0-semantic-release",
+  "release": {
+    "tagFormat": "package-b-v${version}",
+    "branches": [
+      "main"
+    ],
+    "paths": [
+      "package-a/**",
+      "package-b/**"
+    ]
+  }
+}
+```
 
-<p align="center">
-  <img alt="Kill all humans" src="media/bender.png">
-</p>
+You would then run `semantic-release-paths` against each package seperately to create a release. For example, in npm workspaces you could use.
+
+```bash
+npm exec --workspace=package-a -- semantic-release-paths
+npm exec --workspace=package-b -- semantic-release-paths
+```
