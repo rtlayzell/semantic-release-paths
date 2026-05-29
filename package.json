@@ -1,6 +1,6 @@
 {
-  "name": "semantic-release",
-  "description": "Automated semver compliant package publishing",
+  "name": "semantic-release-paths",
+  "description": "Automated semver compliant package publishing with path-based commit filtering",
   "version": "0.0.0-development",
   "type": "module",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
@@ -19,7 +19,7 @@
     "semantic-release": "bin/semantic-release.js"
   },
   "bugs": {
-    "url": "https://github.com/semantic-release/semantic-release/issues"
+    "url": "https://github.com/semantic-release-paths/semantic-release/issues"
   },
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
@@ -92,7 +92,7 @@
     "index.js",
     "cli.js"
   ],
-  "homepage": "https://github.com/semantic-release/semantic-release#readme",
+  "homepage": "https://github.com/semantic-release-paths/semantic-release#readme",
   "keywords": [
     "author",
     "automation",
@@ -138,7 +138,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/semantic-release/semantic-release.git"
+    "url": "git+https://github.com/semantic-release-paths/semantic-release.git"
   },
   "config": {
     "commitizen": {

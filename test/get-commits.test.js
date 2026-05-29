@@ -1,7 +1,7 @@
 import test from "ava";
 import { stub } from "sinon";
 import getCommits from "../lib/get-commits.js";
-import { gitCommits, gitDetachedHead, gitRepo } from "./helpers/git-utils.js";
+import { gitCommitFiles, gitCommits, gitDetachedHead, gitRepo } from "./helpers/git-utils.js";
 
 test.beforeEach((t) => {
   // Stub the logger functions
@@ -111,4 +111,67 @@ test("Return empty array if there is no commits", async (t) => {
 
   // Verify no commit is retrieved
   t.deepEqual(result, []);
+});
+
+test("Filter commits by path globs, returning only those that touch matching files", async (t) => {
+  const { cwd } = await gitRepo();
+
+  await gitCommitFiles([{ path: "src/index.js" }], "src commit", { cwd });
+  await gitCommitFiles([{ path: "docs/readme.md" }], "docs commit", { cwd });
+
+  const result = await getCommits({
+    cwd,
+    options: { paths: ["src/**"] },
+    lastRelease: {},
+    logger: t.context.logger,
+  });
+
+  t.is(result.length, 1);
+  t.is(result[0].message, "src commit");
+});
+
+test("Return all commits when options.paths is not set", async (t) => {
+  const { cwd } = await gitRepo();
+
+  await gitCommitFiles([{ path: "src/index.js" }], "src commit", { cwd });
+  await gitCommitFiles([{ path: "docs/readme.md" }], "docs commit", { cwd });
+
+  const result = await getCommits({
+    cwd,
+    lastRelease: {},
+    logger: t.context.logger,
+  });
+
+  t.is(result.length, 2);
+});
+
+test("Return empty array when no commits match the path globs", async (t) => {
+  const { cwd } = await gitRepo();
+
+  await gitCommitFiles([{ path: "src/index.js" }], "src commit", { cwd });
+  await gitCommitFiles([{ path: "docs/readme.md" }], "docs commit", { cwd });
+
+  const result = await getCommits({
+    cwd,
+    options: { paths: ["lib/**"] },
+    lastRelease: {},
+    logger: t.context.logger,
+  });
+
+  t.deepEqual(result, []);
+});
+
+test("Return all commits when options.paths is an empty array", async (t) => {
+  const { cwd } = await gitRepo();
+
+  await gitCommitFiles([{ path: "src/index.js" }], "src commit", { cwd });
+
+  const result = await getCommits({
+    cwd,
+    options: { paths: [] },
+    lastRelease: {},
+    logger: t.context.logger,
+  });
+
+  t.is(result.length, 1);
 });

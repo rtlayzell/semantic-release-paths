@@ -109,6 +109,35 @@ test("Throw a SemanticReleaseError for each invalid branch", async (t) => {
   t.truthy(errors[5].details);
 });
 
+test('Throw a SemanticReleaseError for invalid "paths" values', async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    branches: [{ name: "master" }],
+    paths: ["src/**", "", 1],
+  };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].code, "EINVALIDPATH");
+  t.is(errors[1].code, "EINVALIDPATH");
+});
+
+test('Throw a SemanticReleaseError for absolute "paths" values', async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    branches: [{ name: "master" }],
+    paths: ["src/**", "/abs/path/**"],
+  };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].code, "EABSOLUTEPATH");
+});
+
 test('Return "true" if all verification pass', async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   const options = { repositoryUrl, tagFormat: `v\${version}`, branches: [{ name: "master" }] };

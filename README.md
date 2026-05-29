@@ -32,6 +32,30 @@ This removes the immediate connection between human emotions and version numbers
 
 > Trust us, this will change your workflow for the better. – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
 
+## Fork Notes
+
+This is a fork of the [semantic-release](https://github.com/semantic-release/semantic-release) repository that introduces the `paths` configuration option. It is intended to provide a rudimentary avenue for monorepo setups, but is by no means a full monorepo solution.
+
+In a monorepo setup, each package specifies it's own release configuration with a `tagFormat` to avoid conflicting versions with other packages in the repository, and a `paths` configuration option for all paths that affect a particular package's version (usually the path of the package and any workspace dependencies).
+
+```json
+{
+  // ...
+  "release": {
+    "tagFormat": "package-v${version}",
+    "extends": [ /* ... */ ],
+    "branches": [
+      "main"
+    ],
+    "paths": [
+      "depedency/**"
+      "package/**"
+    ]
+  }
+  // ...
+}
+```
+
 ## Highlights
 
 - Fully automated release

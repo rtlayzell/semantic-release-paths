@@ -108,6 +108,14 @@ The branches on which releases should happen. By default **semantic-release** wi
 
 See [Workflow configuration](workflow-configuration.md#workflow-configuration) for more details.
 
+### paths
+
+Type: `Array`, `String`<br>
+Default: `**`
+CLI arguments: `--paths`
+
+The paths to take into consideration when fetching commit messages. By default **semantic-release** will consider commits with files on all paths.
+
 ### repositoryUrl
 
 Type: `String`<br>
