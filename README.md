@@ -29,13 +29,13 @@ The issues presented for the above solutions could be resolved if parameterized 
 
 `semantic-release-paths` is a drop-in replacement for [semantic-release](https://github.com/semantic-release/semantic-release)
 
-### Installation
+### Install
 
 ```bash
 npm install -D semantic-release-paths
 ```
 
-### Configuration
+### Configure
 
 As with `semantic-release` proper, you can define your [release configuration](https://github.com/semantic-release/semantic-release/blob/master/docs/usage/configuration.md#configuration) in a number ways. However, with `semantic-release-paths` you have the additional configuration option `paths`, that takes an array of repository relative path globs, and filters the commits passed to the plugins based on matches with the changed file paths.
 
@@ -57,6 +57,14 @@ As with `semantic-release` proper, you can define your [release configuration](h
 
   // ...
 }
+```
+
+### Release
+
+As `semantic-release-paths` is intended as a drop-in replacement, it uses the same binary name as `semantic-release` proper. Therefore to run semantic release you would use the following command:
+
+```bash
+npm exec semantic-release
 ```
 
 ## Monorepo
@@ -106,6 +114,6 @@ and `package-b/package.json` may contain the release configuration:
 You would then run `semantic-release-paths` against each package seperately to create a release. For example, in npm workspaces you could use.
 
 ```bash
-npm exec --workspace=package-a -- semantic-release-paths
-npm exec --workspace=package-b -- semantic-release-paths
+npm exec --workspace=package-a -- semantic-release
+npm exec --workspace=package-b -- semantic-release
 ```
