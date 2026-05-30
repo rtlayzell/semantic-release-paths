@@ -622,6 +622,12 @@ declare module "semantic-release" {
     branches?: ReadonlyArray<BranchSpec> | BranchSpec | undefined;
 
     /**
+     * The paths for which commits should be considered when determining
+     * whether to publish a release.
+     */
+    paths?: ReadonlyArray<string> | string | undefined;
+
+    /**
      * The git repository URL.
      *
      * Any valid git url format is supported (see

@@ -35,6 +35,9 @@ test.serial("Pass options to semantic-release API", async (t) => {
   const argv = [
     "",
     "",
+    "--paths",
+    "packages/a/**",
+    "packages/b/**",
     "-b",
     "master",
     "next",
@@ -81,6 +84,7 @@ test.serial("Pass options to semantic-release API", async (t) => {
 
   td.verify(
     index.default({
+      paths: ["packages/a/**", "packages/b/**"],
       branches: ["master", "next"],
       b: ["master", "next"],
       "repository-url": "https://github/com/owner/repo.git",
@@ -121,6 +125,8 @@ test.serial("Pass options to semantic-release API with alias arguments", async (
   const argv = [
     "",
     "",
+    "--paths",
+    "packages/a/**",
     "--branches",
     "master",
     "--repository-url",
@@ -143,6 +149,7 @@ test.serial("Pass options to semantic-release API with alias arguments", async (
 
   td.verify(
     index.default({
+      paths: ["packages/a/**"],
       branches: ["master"],
       b: ["master"],
       "repository-url": "https://github/com/owner/repo.git",
