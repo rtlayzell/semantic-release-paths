@@ -40,6 +40,7 @@ npm install -D semantic-release-paths
 As with `semantic-release` proper, you can define your [release configuration](https://github.com/semantic-release/semantic-release/blob/master/docs/usage/configuration.md#configuration) in a number ways. However, with `semantic-release-paths` you have the additional configuration option `paths`, that takes an array of repository relative path globs, and filters the commits passed to the plugins based on matches with the changed file paths.
 
 `package.json`
+
 ```json
 {
   // ...
@@ -82,12 +83,8 @@ Given the following monorepo folder structure structure:
   "version": "0.0.0-semantic-release",
   "release": {
     "tagFormat": "package-a-v${version}",
-    "branches": [
-      "main"
-    ],
-    "paths": [
-      "package-a/**"
-    ]
+    "branches": ["main"],
+    "paths": ["package-a/**"]
   }
 }
 ```
@@ -100,13 +97,8 @@ and `package-b/package.json` may contain the release configuration:
   "version": "0.0.0-semantic-release",
   "release": {
     "tagFormat": "package-b-v${version}",
-    "branches": [
-      "main"
-    ],
-    "paths": [
-      "package-a/**",
-      "package-b/**"
-    ]
+    "branches": ["main"],
+    "paths": ["package-a/**", "package-b/**"]
   }
 }
 ```
