@@ -4,6 +4,8 @@ import fileUrl from "file-url";
 import pEachSeries from "p-each-series";
 import gitLogParser from "git-log-parser";
 import getStream from "get-stream";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import { GIT_NOTE_REF } from "../../lib/definitions/constants.js";
 
 /**
@@ -336,4 +338,26 @@ export async function gitPushNotes(repositoryUrl, execaOptions) {
  */
 export async function gitGetNote(ref, execaOptions) {
   return (await execa("git", ["notes", "--ref", `${GIT_NOTE_REF}-${ref}`, "show", ref], execaOptions)).stdout;
+}
+
+/**
+ * Create files in the repository, stage them, and create a commit.
+ *
+ * @param {Array<{path: String, content?: String}>} files Files to create. `path` is relative to `cwd`.
+ * @param {String} message Commit message.
+ * @param {Object} execaOpts Options to pass to `execa` (must include `cwd`).
+ *
+ * @return {Promise<Object>} The created commit.
+ */
+export async function gitCommitFiles(files, message, execaOpts) {
+  const { cwd } = execaOpts;
+  for (const { path: filePath, content = "" } of files) {
+    const fullPath = resolve(cwd, filePath);
+    await mkdir(dirname(fullPath), { recursive: true });
+    await writeFile(fullPath, content);
+    await execa("git", ["add", filePath], execaOpts);
+  }
+
+  await execa("git", ["commit", "-m", message, "--no-gpg-sign"], execaOpts);
+  return (await gitGetCommits(undefined, execaOpts))[0];
 }

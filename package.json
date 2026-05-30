@@ -1,6 +1,6 @@
 {
-  "name": "semantic-release",
-  "description": "Automated semver compliant package publishing",
+  "name": "semantic-release-paths",
+  "description": "Automated semver compliant package publishing with path-based commit filtering",
   "version": "0.0.0-development",
   "type": "module",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
@@ -19,12 +19,13 @@
     "semantic-release": "bin/semantic-release.js"
   },
   "bugs": {
-    "url": "https://github.com/semantic-release/semantic-release/issues"
+    "url": "https://github.com/rtlayzell/semantic-release-paths/issues"
   },
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)",
-    "Matt Travi <npm@travi.org> (https://matt.travi.org/)"
+    "Matt Travi <npm@travi.org> (https://matt.travi.org/)",
+    "Reegan Layzell (https://github.com/rtlayzell)"
   ],
   "dependencies": {
     "@semantic-release/commit-analyzer": "^13.0.1",
@@ -92,7 +93,7 @@
     "index.js",
     "cli.js"
   ],
-  "homepage": "https://github.com/semantic-release/semantic-release#readme",
+  "homepage": "https://github.com/rtlayzell/semantic-release-paths#readme",
   "keywords": [
     "author",
     "automation",
@@ -138,7 +139,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/semantic-release/semantic-release.git"
+    "url": "git+https://github.com/rtlayzell/semantic-release-paths.git"
   },
   "config": {
     "commitizen": {
